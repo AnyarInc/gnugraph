@@ -2,4 +2,31 @@
 
 A header only interface to gnuplot.exe, to plot 2D and 3D graphs from C++ code.
 
-## Currently supports Gnuplot 4.6
+## Basic Example
+``` C++
+int main()
+{
+  GnuGraph graph("C:/Program Files/gnuplot/bin/gnuplot.exe"); // provide path to executable
+
+   vector<double> x, y;
+   for (size_t i = 0; i < 200; ++i)
+   {
+      x.push_back(double(i));
+      y.push_back(sqrt(x[i]));
+   }
+
+   const string output = graph.plot(x, y, "y = sqrt(x)");
+   cout << output << '\n'; // print any errors to console
+   cin.get(); // keep the window open until the user presses ENTER
+   return 0;
+}
+```
+
+## Features
+- Supports runtime plotting from C++
+- Support animated plotting
+- Supports std container plotting
+- Support Eigen linear algebra vector plotting
+
+### Currently supports Gnuplot 4.6
+### Currently Windows only support (uses Windows piping)
