@@ -1,2 +1,5 @@
 # gnugraph
-Header only C++ plotting interface for Gnuplot
+
+A header only interface to gnuplot.exe, to plot 2D and 3D graphs from C++ code.
+
+## Currently supports Gnuplot 4.6
