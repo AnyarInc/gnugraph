@@ -33,3 +33,25 @@ int main()
 
 ### Currently supports Gnuplot 4.6
 ### Currently Windows only support (uses Windows piping)
+
+## 3D Plotting Example
+``` C++
+int main()
+{
+  GnuGraph graph;
+
+   const size_t n = 200;
+   vector<vector<double>> vec(n);
+   for (size_t i = 0; i < n; ++i)
+   {
+      vec[i] = { cos(i / 20.0), sin(i / 30.0), cos(i / 50.0) };
+   }
+
+   graph.addLine3D(vec);
+   cout << graph.plot3D() << '\n';
+   cin.get();
+   return 0;
+}
+```
+
+> Resulting graph
