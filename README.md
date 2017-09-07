@@ -22,6 +22,9 @@ int main()
 }
 ```
 
+> Resulting graph
+<img src="https://github.com/AnyarInc/gnugraph/wiki/graphics/gnugraph-sqrt.PNG" width="60%">
+
 ## Features
 - Supports runtime plotting from C++
 - Support animated plotting
