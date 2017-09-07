@@ -55,3 +55,4 @@ int main()
 ```
 
 > Resulting graph
+<img src="https://github.com/AnyarInc/gnugraph/wiki/graphics/gnugraph-3D.PNG" width="60%">
