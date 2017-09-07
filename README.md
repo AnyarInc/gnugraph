@@ -6,7 +6,7 @@ A header only interface to gnuplot.exe, to plot 2D and 3D graphs from C++ code.
 ``` C++
 int main()
 {
-  GnuGraph graph("C:/Program Files/gnuplot/bin/gnuplot.exe"); // provide path to executable
+   GnuGraph graph("C:/Program Files/gnuplot/bin/gnuplot.exe"); // provide path to executable
 
    vector<double> x, y;
    for (size_t i = 0; i < 200; ++i)
@@ -38,7 +38,7 @@ int main()
 ``` C++
 int main()
 {
-  GnuGraph graph;
+   GnuGraph graph;
 
    const size_t n = 200;
    vector<vector<double>> vec(n);
