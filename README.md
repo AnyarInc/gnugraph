@@ -27,9 +27,9 @@ int main()
 
 ## Features
 - Supports runtime plotting from C++
-- Support animated plotting
+- Supports animated plotting
 - Supports std container plotting
-- Support Eigen linear algebra vector plotting
+- Supports Eigen linear algebra vector plotting
 
 ### Currently supports Gnuplot 4.6
 ### Currently Windows only support (uses Windows piping)
