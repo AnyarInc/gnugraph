@@ -35,7 +35,7 @@ void test2()
    GnuGraph graph;
 
    vector<double> x, y;
-   for (int i = 0; i < 200; ++i)
+   for (size_t i = 0; i < 200; ++i)
    {
       x.push_back(double(i));
       y.push_back(sqrt(x[i]));
@@ -67,7 +67,7 @@ void test4()
    GnuGraph graph;
 
    vector<double> x0, y0, x1, y1;
-   for (int i = 0; i < 200; ++i)
+   for (size_t i = 0; i < 200; ++i)
    {
       x0.push_back(double(i));
       y0.push_back(sqrt(x0[i]));
@@ -106,6 +106,22 @@ void test5()
    pressEnter();
 }
 
+void test6()
+{
+   GnuGraph graph;
+
+   const size_t n = 200;
+   vector<vector<double>> vec(n);
+   for (size_t i = 0; i < n; ++i)
+   {
+      vec[i] = { cos(i / 20.0), sin(i / 30.0), cos(i / 50.0) };
+   }
+
+   graph.addLine3D(vec);
+   cout << graph.plot3D() << '\n';
+   pressEnter();
+}
+
 int main(int argc, char* argv[])
 {
    test1();
@@ -113,6 +129,7 @@ int main(int argc, char* argv[])
    test3();
    test4();
    test5();
+   test6();
 
    return 0;
 }
