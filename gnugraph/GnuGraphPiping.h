@@ -63,7 +63,7 @@ namespace gnugraph
    protected:
       void errorExit(const std::string& description)
       {
-         std::cout << "ERROR: " << description << '\n';
+         throw std::runtime_error(description);
       }
 
       void write(const std::string& command)
@@ -128,9 +128,7 @@ namespace gnugraph
 
       /* This function starts the gnuplot.exe process and sets the appropriate pipe
       *	handles for communication. The class member variable m_ProcInfo is returned
-      * containing a handle to the process, and the thread it is contained in. The
-      *	path to gnuplot.exe is assumed to be "C:\Gnuplot\binary", if it is not, then
-      * modify the "const TCHAR *GNUPLOT_EXE" declaration.
+      * containing a handle to the process, and the thread it is contained in.
       */
       void startProcess()
       {
