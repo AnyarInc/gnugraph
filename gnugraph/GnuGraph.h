@@ -20,6 +20,7 @@
 #include "gnugraph/GnuGraphPiping.h"
 
 #include <vector>
+#include <filesystem>
 
 struct GnuGraph : public gnugraph::GnuGraphFormatter, public gnugraph::GnuGraphPiping
 {
@@ -104,15 +105,35 @@ struct GnuGraph : public gnugraph::GnuGraphFormatter, public gnugraph::GnuGraphP
    }
 
    template <typename T> // designed for a std::container of vectors (i.e. std::container<Eigen::Vector3d>)
-   void addLine3D(const T& input, const std::string& title = "")
+   void addLine3D(const T& input)
    {
       std::string formatted;
       for (unsigned i = 0; i < input.size(); ++i)
+      {
          formatted += format(input[i]) + "\n";
+      }
 
       data.emplace_back(formatted);
       if (!initialized)
+      {
+         titles.push_back("");
+      }
+   }
+
+   template <typename T> // designed for a std::container of vectors (i.e. std::container<Eigen::Vector3d>)
+   void addLine3DTitle(const T& input, const std::string& title)
+   {
+      std::string formatted;
+      for (unsigned i = 0; i < input.size(); ++i)
+      {
+         formatted += format(input[i]) + "\n";
+      } 
+
+      data.emplace_back(formatted);
+      if (!initialized)
+      {
          titles.push_back(title);
+      }   
    }
 
    template <typename T> // designed for a std::container of vectors (i.e. std::container<Eigen::Vector3d>)
@@ -144,7 +165,14 @@ struct GnuGraph : public gnugraph::GnuGraphFormatter, public gnugraph::GnuGraphP
    }
 
    template <typename T> // designed for std::container<Eigen::Vector3d>
-   std::string plotLine3D(const T& input, const std::string& title = "")
+   std::string plotLine3D(const T& input)
+   {
+      addLine3D(input);
+      return plot3D();
+   }
+
+   template <typename T> // designed for std::container<Eigen::Vector3d>
+   std::string plotLine3DTitle(const T& input, const std::string& title = "")
    {
       addLine3D(input, title);
       return plot3D();
@@ -200,6 +228,47 @@ struct GnuGraph : public gnugraph::GnuGraphFormatter, public gnugraph::GnuGraphP
          titles.push_back(title);
    }
 
+   // Activates gif output from gnuplot, call this before any graphing has occured. This will save a .gif file
+   //    in the active directory.
+   // Note: Only one output format is allowed to be activated at a time. If more than one is called, system will
+   //    only use the first output format called.
+   void addGif(const std::string& file_name)
+   {
+      if (add_image_sequence)
+      {
+         std::cout << "Warning: gnuplot only supports one output format at a time\n";
+         return;
+      }
+
+      output_name = file_name;
+      add_gif = true;
+   }
+
+   // Activates image sequence output from gnuplot, call this before any graphing has occured. This will dump all
+   //    .png frames into a folder called 'output' in the active directory.
+   // Note: Only one output format is allowed to be activated at a time. If more than one is called, system will
+   //    only use the first output format called.
+   void addImageSequence(const std::string& file_name)
+   {
+      if (add_gif)
+      {
+         std::cout << "Warning: gnuplot only supports one output format at a time\n";
+         return;
+      }
+
+      output_name = file_name;
+      std::filesystem::create_directories("./output");
+      add_image_sequence = true;
+   }
+
+   // Closes output file in gnuplot. Call this at end of graph processing to save output file.
+   // Note: Works for both gif and image sequence
+   std::string closeOutput()
+   {
+      write("unset output\n");
+      return read();
+   }
+
 private:
    std::string line_type = "lines";
 
@@ -210,6 +279,13 @@ private:
 
    bool mode_2D = true;
    bool initialized = false;
+
+   // GIF and Image Sequence Parameters
+   bool add_image_sequence = false;  // Flag for if image sequence output is activated
+   bool add_gif = false;  // Flag for if gif output is activated
+   std::string output_name{};  // Name (without extension) of output file
+   size_t frame_id = 1;  // Id number of current frame, starts at 1. Maximum frame number is 99999 (~100 secs @ 0.01 dt)
+   std::string frame;  // String version of frame ID, used internally to name image output
 
    void setup2D()
    {
@@ -257,6 +333,12 @@ private:
 
       if (!initialized)
       {
+         // Check for output options
+         if (add_gif)
+            setupGif();
+         else if (add_image_sequence)
+            setupImageSequence();
+
          //setup += "set term windows\n"; // gnuplot command
          std::string title;
          if (titles.size() > 0)
@@ -301,13 +383,55 @@ private:
             input += i + "e\n";
 
          write(setup + input);
+
+         // export frame
+         if (add_image_sequence)
+            exportImageFrame();
       }
       else
+      {
          write(setup + data.front() + "e\n");
-
+         
+         // export frame
+         if (add_image_sequence)
+            exportImageFrame();
+      }
       data.clear();
       data_vectors.clear();
 
       return read();
+   }
+
+   // Calls necessary commands to enable gif output for gnuplot
+   std::string setupGif()
+   {
+      std::string result = "";
+      write("set terminal gif animate delay .001\n");
+      result = read();
+      write("set output '" + output_name + ".gif'\n");
+      result += read();
+
+      return result;
+   }
+
+   // Calls necessary commands to enable png output for gnuplot
+   std::string setupImageSequence()
+   {
+      std::string result = "";
+      write("set terminal pngcairo\n");
+      result = read();
+      write("set output 'output/" + output_name + "00001.png'\n");
+      result += read();
+      add_image_sequence = true;
+
+      return result;
+   }
+
+   // Increments frame count and sets up next frame to be saved, this simultaneously saves the previous frame in gnuplot
+   void exportImageFrame()
+   {
+      ++frame_id;
+      std::string frame_number = std::to_string(frame_id);
+      write("set output 'output/" + output_name + std::string(5 - frame_number.length(), '0') + frame_number + ".png'\n");
    }
 };

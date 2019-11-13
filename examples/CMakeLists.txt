@@ -1,14 +1,10 @@
 cmake_minimum_required(VERSION 2.8.7)
 project(gnugraph)
 
+set(CMAKE_CXX_STANDARD 17)
+
 if(MSVC)
 	add_definitions(/bigobj)
-else()
-	set(DEBUG_FLAGS "-std=c++14")
-	set(RELEASE_FLAGS "-std=c++14")
-
-	set(CMAKE_CXX_FLAGS ${RELEASE_FLAGS})
-	set(CMAKE_CXX_FLAGS_DEBUG ${DEBUG_FLAGS})
 endif()
 
 mark_as_advanced (CMAKE_CONFIGURATION_TYPES)

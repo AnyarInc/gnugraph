@@ -24,7 +24,7 @@ inline void pressEnter(void)
 
 void test1()
 {
-   GnuGraph graph("C:/Users/sberry/Desktop/Ascent/gnuplot/bin");
+   GnuGraph graph;
    string output = graph.plot("1 1\n2 4\n3 9\n4 16\n5 25\n6 36\n7 49\n8 64\n9 81\n10 100\n");
    cout << "Test1:\n" << output << '\n';
    pressEnter();
